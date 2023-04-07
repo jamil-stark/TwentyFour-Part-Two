@@ -9,7 +9,7 @@ int easyArray[100][4];
 int i, j;
 int lines;
 int valueToUseInFileName = 0;
-int randomNumber, num1, num2, num3, num4;
+int randomNumber, num1, num2, num3, num4, result;
 
 int main()
 {
@@ -23,34 +23,84 @@ int main()
     initArray(lines);                                       // Set the array values.
     selectRandomNumbers();
     printNumbersToUse();
-
-
+    printf("The result is: %d\n", result);
     return 0;
 }
 
+
+int sizeofInput = 0;
 void printNumbersToUse()
 {
-    printf("The numbers to use are: %d, %d, %d, %d", num1, num2, num3, num4);
+    printf("The numbers to use are: %d, %d, %d, %d.", num1, num2, num3, num4);
     while (getchar() != '\n');
-    char input[100];
-    printf("Enter an expression: ");
-    fgets(input, 100, stdin);
-    // remove newline character from input
-    input[strcspn(input, "\n")] = '\0';
-    int result = evaluate_expression(input);
-    printf("Result: %d\n", result);
+   char input[100];
+    printf("Enter your solution: ");
+    fgets(input, sizeof(input), stdin);
+    sizeofInput = strlen(input);
+    int fineCharacters = 1;
+    int finedigits = 1;
+    char digitChar = '0';
+    for (int c = 0; c < sizeofInput; c++)
+    {
+        fineCharacters = 0;
+        if (((input[c] == '(')) || isdigit(input[c]) || ((input[c] == ')')) || isspace(input[c]) || ((input[c] == '*')) || ((input[c] == '/')) || ((input[c] == '+')) || ((input[c] == '-')))
+        {
+            fineCharacters = 1;
+        }
+        else
+        {
+            fineCharacters = 0;
+            printf("\nError! Invalid symbol entered. Please try again.\n");
+            break;
+        }
 
+
+
+    }
+
+    if (fineCharacters){
+        for (int l = 0; l < sizeofInput; l++)
+        {
+                       if (isdigit(input[l]))
+            {
+                digitChar = input[l];
+                if ((digitChar - '0' != 2) && (digitChar - '0' != 3) && (digitChar - '0' != 4) && (digitChar - '0' != 5))
+                {
+                    finedigits = 0;
+                    printf("\nError! You must use all four numbers, and use each only once. Please try again.\n");
+                    break;
+                }
+                else
+                {
+                    finedigits = 1;
+                }
+            }
+        }
+        
+    }
+
+    if (fineCharacters && finedigits)
+    {
+        input[strcspn(input, "\n")] = '\0'; // remove the newline character at the end of the input
+        result = evaluate_expression(input);
+
+    }
+    // else
+    // {
+    //     printf("Kibulamu ku bwerufu");
+    // }
+
+}
+
+is_correct()
+{
 }
 
 void chooseText(char *letterChose)
 {
     printf("\nChoose your difficulty level: E for easy, M for medium, and H for hard (default is easy).\nYour choice --> ");
     scanf("%s", letterChose);
-    
-
 }
-
-
 
 int changeLevelAndReturnNumberOfLines(char letterToCompare[2])
 {
@@ -186,6 +236,31 @@ int precedence(char op)
     }
 }
 
+void evaluate_operation(Stack *s)
+{
+    int b = pop_value(s);
+    int a = pop_value(s);
+    char op = pop_operator(s);
+    int result;
+    switch (op)
+    {
+    case '+':
+        result = a + b;
+        break;
+    case '-':
+        result = a - b;
+        break;
+    case '*':
+        result = a * b;
+        break;
+    case '/':
+        result = a / b;
+        break;
+    }
+    push_value(s, result);
+    printf("%d %c %d = %d.\n", a, op, b, result);
+}
+
 int evaluate_expression(char *input)
 {
     Stack *stack = malloc(sizeof(Stack));
@@ -213,26 +288,7 @@ int evaluate_expression(char *input)
                    stack->operators[stack->operator_top] != '(' &&
                    precedence(input[i]) <= precedence(stack->operators[stack->operator_top]))
             {
-                int b = pop_value(stack);
-                int a = pop_value(stack);
-                char op = pop_operator(stack);
-                int result;
-                switch (op)
-                {
-                case '+':
-                    result = a + b;
-                    break;
-                case '-':
-                    result = a - b;
-                    break;
-                case '*':
-                    result = a * b;
-                    break;
-                case '/':
-                    result = a / b;
-                    break;
-                }
-                push_value(stack, result);
+                evaluate_operation(stack);
             }
             push_operator(stack, input[i]);
             i++;
@@ -246,26 +302,7 @@ int evaluate_expression(char *input)
         {
             while (stack->operator_top >= 0 && stack->operators[stack->operator_top] != '(')
             {
-                int b = pop_value(stack);
-                int a = pop_value(stack);
-                char op = pop_operator(stack);
-                int result;
-                switch (op)
-                {
-                case '+':
-                    result = a + b;
-                    break;
-                case '-':
-                    result = a - b;
-                    break;
-                case '*':
-                    result = a * b;
-                    break;
-                case '/':
-                    result = a / b;
-                    break;
-                }
-                push_value(stack, result);
+                evaluate_operation(stack);
             }
             pop_operator(stack); // discard the left parenthesis
             i++;
@@ -280,28 +317,11 @@ int evaluate_expression(char *input)
     // evaluate any remaining operators on the stack
     while (stack->operator_top >= 0)
     {
-        int b = pop_value(stack);
-        int a = pop_value(stack);
-        char op = pop_operator(stack);
-        int result;
-        switch (op)
-        {
-        case '+':
-            result = a + b;
-            break;
-        case '-':
-            result = a - b;
-            break;
-        case '*':
-            result = a * b;
-            break;
-        case '/':
-            result = a / b;
-            break;
-        }
-        push_value(stack, result);
+        evaluate_operation(stack);
     }
+
     int final_result = pop_value(stack);
+    printf("Final result: %d.\n", final_result);
     free(stack->values);
     free(stack->operators);
     free(stack);
