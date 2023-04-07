@@ -10,31 +10,30 @@ int hardArray [100][4];
 int i,j;
 int lines;
 int valueToUseInFileName = 0;
+int randomNumber, num1, num2, num3, num4;
 
 
 int main(){
+    srand(1);
     int size;
+
     char letterChose[2];
     printf("Welcome to the game of TwentyFour Part Two!\nUse each of the four numbers shown exactly once,\ncombining them somehow with the basic mathematical operators (+,-,*,/)\nto yield the value twenty-four.");
-    chooseText(letterChose);
-    lines = changeLevelAndReturnNumberOfLines(letterChose);
-    // numbersToUse();
-    // char chosen[2] = ["E"];
+    chooseText(letterChose); //Prompt User to enter letter for difficulty.
+    lines = changeLevelAndReturnNumberOfLines(letterChose); // call the function which returns number of lines corresponding with the selected difficulty.
+    initArray(lines); //Set the array values.
+    selectRandomNumbers();
+    printNumbersToUse();
 
-
-    // printf("The number of lines in the text file is: %d", lines);
-        initArray(size);
-
-       for (i = 0; i < size; i++) {
-        for (j = 0; j < 4; j++) {
-            printf("%d ", easyArray[i][j]);
-        }
-        printf("\n");
-    }
 
 
     return 0;
 
+}
+
+
+void printNumbersToUse(){
+    printf("The numbers to use are: %d, %d, %d, %d", num1, num2, num3, num4);
 }
 
 
@@ -117,4 +116,15 @@ void initArray(int size){
         }
     }
 
+}
+
+
+void selectRandomNumbers(){
+    randomNumber = rand() % lines; //generate a radndom number between 0 and size of identified file.
+    printf("Random number: %d \n", randomNumber);
+    num1 = easyArray[randomNumber][0];
+    num2 = easyArray[randomNumber][1];
+    num3 = easyArray[randomNumber][2];
+    num4 = easyArray[randomNumber][3];
+    
 }
