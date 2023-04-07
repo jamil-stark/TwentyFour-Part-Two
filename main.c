@@ -21,85 +21,111 @@ int main()
     chooseText(letterChose);                                // Prompt User to enter letter for difficulty.
     lines = changeLevelAndReturnNumberOfLines(letterChose); // call the function which returns number of lines corresponding with the selected difficulty.
     initArray(lines);                                       // Set the array values.
-    selectRandomNumbers();
+
     printNumbersToUse();
     printf("The result is: %d\n", result);
     return 0;
 }
 
-
 int sizeofInput = 0;
 void printNumbersToUse()
 {
-    printf("The numbers to use are: %d, %d, %d, %d.", num1, num2, num3, num4);
-    while (getchar() != '\n');
-   char input[100];
-    printf("Enter your solution: ");
-    fgets(input, sizeof(input), stdin);
-    sizeofInput = strlen(input);
+
     int fineCharacters = 1;
     int finedigits = 1;
     char digitChar = '0';
-    for (int c = 0; c < sizeofInput; c++)
+    int outOfLoop = 0;
+
+    while (!outOfLoop)
     {
-        fineCharacters = 0;
-        if (((input[c] == '(')) || isdigit(input[c]) || ((input[c] == ')')) || isspace(input[c]) || ((input[c] == '*')) || ((input[c] == '/')) || ((input[c] == '+')) || ((input[c] == '-')))
-        {
-            fineCharacters = 1;
-        }
-        else
+        selectRandomNumbers();
+        printf("The numbers to use are: %d, %d, %d, %d.\n", num1, num2, num3, num4);
+        char input[100];
+        printf("Enter your solution: ");
+        fgets(input, sizeof(input), stdin);
+        sizeofInput = strlen(input);
+        for (int c = 0; c < sizeofInput; c++)
         {
             fineCharacters = 0;
-            printf("\nError! Invalid symbol entered. Please try again.\n");
-            break;
-        }
-
-
-
-    }
-
-    if (fineCharacters){
-        for (int l = 0; l < sizeofInput; l++)
-        {
-                       if (isdigit(input[l]))
+            if (((input[c] == '(')) || isdigit(input[c]) || ((input[c] == ')')) || isspace(input[c]) || ((input[c] == '*')) || ((input[c] == '/')) || ((input[c] == '+')) || ((input[c] == '-')))
             {
-                digitChar = input[l];
-                if ((digitChar - '0' != 2) && (digitChar - '0' != 3) && (digitChar - '0' != 4) && (digitChar - '0' != 5))
-                {
-                    finedigits = 0;
-                    printf("\nError! You must use all four numbers, and use each only once. Please try again.\n");
-                    break;
-                }
-                else
-                {
-                    finedigits = 1;
-                }
+                fineCharacters = 1;
+            }
+            else
+            {
+                fineCharacters = 0;
+                printf("\nError! Invalid symbol entered. Please try again.\n\n");
+                break;
             }
         }
-        
+
+        if (fineCharacters)
+        {
+            for (int l = 0; l < sizeofInput; l++)
+            {
+                if (isdigit(input[l]))
+                {
+                    digitChar = input[l];
+                    if ((digitChar - '0' != num1) && (digitChar - '0' != num2) && (digitChar - '0' != num3) && (digitChar - '0' != num4))
+                    {
+
+                        finedigits = 0;
+                        printf("\nError! You must use all four numbers, and use each only once. Please try again.\n\n");
+                        break;
+                    }
+                    else
+                    {
+                        if ((digitChar - '0' == num1))
+                        {
+                            num1 = 100;
+                        }
+                        else if ((digitChar - '0' == num2))
+                        {
+                            num2 = 100;
+                        }
+                        else if ((digitChar - '0' == num3))
+                        {
+                            num3 = 100;
+                        }
+                        else if ((digitChar - '0' == num4))
+                        {
+                            num4 = 100;
+                        }
+                    }
+                }
+            }
+
+            if (num1 == 100 && num2 == 100 && num3 == 100 && num4 == 100)
+            {
+                finedigits = 1;
+            }
+            else
+            {
+             printf("nummbers : %d %d %d %d", num1, num2, num3, num4);
+                finedigits = 0;
+                printf("\nError! You must use all four numbers, and use each only once. Please try again.\n\n");
+            }
+        }
+
+        if (fineCharacters && finedigits)
+        {
+            input[strcspn(input, "\n")] = '\0'; // remove the newline character at the end of the input
+            result = evaluate_expression(input);
+            outOfLoop = 1;
+        }
+        // else
+        // {
+        //     printf("Kibulamu ku bwerufu");
+        // }
     }
-
-    if (fineCharacters && finedigits)
-    {
-        input[strcspn(input, "\n")] = '\0'; // remove the newline character at the end of the input
-        result = evaluate_expression(input);
-
-    }
-    // else
-    // {
-    //     printf("Kibulamu ku bwerufu");
-    // }
-
-}
-
-is_correct()
-{
 }
 
 void chooseText(char *letterChose)
 {
     printf("\nChoose your difficulty level: E for easy, M for medium, and H for hard (default is easy).\nYour choice --> ");
     scanf("%s", letterChose);
+    while (getchar() != '\n')
+        ;
 }
 
 int changeLevelAndReturnNumberOfLines(char letterToCompare[2])
@@ -181,7 +207,7 @@ void initArray(int size)
 void selectRandomNumbers()
 {
     randomNumber = rand() % lines; // generate a radndom number between 0 and size of identified file.
-    printf("Random number: %d \n", randomNumber);
+    // printf("Random number: %d \n", randomNumber);
     num1 = easyArray[randomNumber][0];
     num2 = easyArray[randomNumber][1];
     num3 = easyArray[randomNumber][2];
