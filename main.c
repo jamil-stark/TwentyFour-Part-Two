@@ -10,6 +10,7 @@ int i, j;
 int lines;
 int valueToUseInFileName = 0;
 int randomNumber, num1, num2, num3, num4, result;
+int option = 0;
 
 int main()
 {
@@ -23,7 +24,29 @@ int main()
     initArray(lines);                                       // Set the array values.
 
     printNumbersToUse();
-    printf("The result is: %d\n", result);
+    // printf("The result is: %d\n", result);
+    while (option != 3)
+    {
+        option = prompt();
+        if (option == 1)
+        {
+            printNumbersToUse();
+        }
+        else if (option == 2)
+        {
+            chooseText(letterChose);                                // Prompt User to enter letter for difficulty.
+            lines = changeLevelAndReturnNumberOfLines(letterChose); // call the function which returns number of lines corresponding with the selected difficulty.
+            initArray(lines);                                       // Set the array values.
+
+            printNumbersToUse();
+        }
+        else{
+            break;
+        }
+    }
+
+    printf("Thanks for playing!\nExiting...");
+
     return 0;
 }
 
@@ -35,6 +58,7 @@ void printNumbersToUse()
     int finedigits = 1;
     char digitChar = '0';
     int outOfLoop = 0;
+    int err = 0;
 
     while (!outOfLoop)
     {
@@ -44,6 +68,11 @@ void printNumbersToUse()
         printf("Enter your solution: ");
         fgets(input, sizeof(input), stdin);
         sizeofInput = strlen(input);
+        if (sizeofInput < 2)
+        {
+            continue;
+        }
+
         for (int c = 0; c < sizeofInput; c++)
         {
             fineCharacters = 0;
@@ -71,6 +100,7 @@ void printNumbersToUse()
 
                         finedigits = 0;
                         printf("\nError! You must use all four numbers, and use each only once. Please try again.\n\n");
+                        err = 1;
                         break;
                     }
                     else
@@ -101,9 +131,13 @@ void printNumbersToUse()
             }
             else
             {
-             printf("nummbers : %d %d %d %d", num1, num2, num3, num4);
-                finedigits = 0;
-                printf("\nError! You must use all four numbers, and use each only once. Please try again.\n\n");
+                if (!err)
+                {
+                    // printf("nummbers : %d %d %d %d", num1, num2, num3, num4);
+                    finedigits = 0;
+                    printf("\nError! You must use all four numbers, and use each only once. Please try again.\n\n");
+                    err = 1;
+                }
             }
         }
 
@@ -111,6 +145,15 @@ void printNumbersToUse()
         {
             input[strcspn(input, "\n")] = '\0'; // remove the newline character at the end of the input
             result = evaluate_expression(input);
+            if (result == 24)
+            {
+                printf("Well done! You are a math genius.\n\n");
+            }
+            else
+            {
+                printf("Sorry. Your soulution did not evaluate to 24.\n\n");
+            }
+
             outOfLoop = 1;
         }
         // else
@@ -120,12 +163,21 @@ void printNumbersToUse()
     }
 }
 
+int prompt()
+{
+    option = 1;
+    printf("Enter: \t1 to play again,\n\t2 to change the difficulty level and then play again, or\n\t3 to exit the program.\n\tYour choice --> ");
+    scanf("%d", &option);
+    while (getchar() != '\n');
+
+    return option;
+}
+
 void chooseText(char *letterChose)
 {
     printf("\nChoose your difficulty level: E for easy, M for medium, and H for hard (default is easy).\nYour choice --> ");
     scanf("%s", letterChose);
-    while (getchar() != '\n')
-        ;
+    while (getchar() != '\n');
 }
 
 int changeLevelAndReturnNumberOfLines(char letterToCompare[2])
