@@ -12,6 +12,12 @@ int valueToUseInFileName = 0;
 int randomNumber, num1, num2, num3, num4, result;
 int option = 0;
 
+void printNumbersToUse();
+void chooseText(char *letterChose);
+void initArray(int size);
+void selectRandomNumbers();
+
+
 int main()
 {
     srand(1);
